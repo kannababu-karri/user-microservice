@@ -1,22 +1,29 @@
 package com.restful.user.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.restful.user.entities.User;
 import com.restful.user.exception.InvalidUserException;
 import com.restful.user.service.UserService;
+import com.restful.user.utils.JwtUtil;
 import com.restful.user.utils.StringUtility;
+import com.restful.user.utils.Utils;
+
+import jakarta.servlet.http.HttpSession;
 
 @CrossOrigin(origins = "http://localhost:4200")
-@Controller
+@RestController
 @RequestMapping("/api/user")
 public class LoginController {
 	
@@ -29,7 +36,8 @@ public class LoginController {
     @GetMapping("/validate/user")
     public ResponseEntity<User> getByValidateUser(
             @RequestParam(required = false) String username,
-            @RequestParam(required = false) String password) throws Exception {
+            @RequestParam(required = false) String password,
+            HttpSession session) throws Exception {
     	
     	_LOGGER.info(">>> Inside getById. <<<");
     	_LOGGER.info(">>> Username. <<<"+username);
@@ -49,6 +57,18 @@ public class LoginController {
 	        
         	if(user != null && user.getUserId() > 0) {
         		_LOGGER.info(">>> user.getUserId() > 0. <<<"+user.getUserId());
+        		
+        		//Create token
+        		//Get jwt token
+        		List<String> roles = new ArrayList<>();
+        		roles.add(Utils.getUserRole());
+        		roles.add(Utils.getViewRole());
+        		
+        		String token = JwtUtil.generateToken(username, roles);
+        		//session.setAttribute(Utils.getTokenKey(),token);
+        		_LOGGER.info(">>> user.getUserId() > token <<<"+token);
+        		user.setToken(token);
+        		
         		return ResponseEntity.ok(user);
         	} else {
         		_LOGGER.info(">>> No user in the system. <<<");

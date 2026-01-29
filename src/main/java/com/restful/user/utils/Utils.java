@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public final class Utils {
 	
 	private static final String SESSION_LOGIN_USER = "SESSION_LOGIN_USER";
+	private static final String SESSION_TOKEN_USER = "SESSION_TOKEN_USER";
 	
 	/**
 	 * Get current timestamp
@@ -84,6 +85,15 @@ public final class Utils {
 	}
 	
 	/**
+	 * Used for login user id credentials.
+	 * 
+	 * @return
+	 */
+	public static String getTokenKey() {
+		return SESSION_TOKEN_USER;
+	}
+	
+	/**
      * User Roles Enum
      */
     public enum Role {
@@ -107,6 +117,18 @@ public final class Utils {
                          .map(Role::getValue)
                          .collect(Collectors.toList());
         }
+    }
+    
+    public static String getAdminRole() {
+    	return ILConstants.ADMIN_ROLE;
+    }
+    
+    public static String getUserRole() {
+    	return ILConstants.USER_ROLE;
+    }
+    
+    public static String getViewRole() {
+    	return ILConstants.VIEW_ROLE;
     }
 
 }

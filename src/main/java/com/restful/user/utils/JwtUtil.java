@@ -3,10 +3,13 @@ package com.restful.user.utils;
 import java.util.Date;
 import java.util.List;
 
-import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.stereotype.Service;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
+@Service
 public class JwtUtil {
 
     private static final String SECRET = "WritingJWTTokenMultipleTimesHowtodoitanditshouldbe256";
@@ -17,9 +20,22 @@ public class JwtUtil {
                 .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(
-                    new Date(System.currentTimeMillis() + 3600000))
+                    new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // 1 hour
                 .signWith(SignatureAlgorithm.HS256, SECRET)
                 .compact();
+    }
+    
+    public String extractUsername(String token) {
+        return parseToken(token).getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+        	parseToken(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public static Claims parseToken(String token) {

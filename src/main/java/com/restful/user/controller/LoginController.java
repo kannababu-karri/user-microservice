@@ -61,8 +61,9 @@ public class LoginController {
         		//Create token
         		//Get jwt token
         		List<String> roles = new ArrayList<>();
-        		roles.add(Utils.getUserRole());
-        		roles.add(Utils.getViewRole());
+        		roles.add(user.getRole().trim());
+        		//roles.add(Utils.getUserRole());
+        		//roles.add(Utils.getViewRole());
         		
         		String token = JwtUtil.generateToken(username, roles);
         		//session.setAttribute(Utils.getTokenKey(),token);
